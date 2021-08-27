@@ -15,7 +15,7 @@ import {
   InputLeftAddon
 } from '@chakra-ui/react';
 
-import { Logo } from '../Logo';
+import { Logo } from '../components';
 import firebase from '../config/firebase';
 
 const validationSchema = yup.object().shape({
