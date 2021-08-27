@@ -5,7 +5,7 @@ export const Agenda = () => {
     const logout = () => firebase.auth().signOut()
     return (
       <div>
-          <Button onClick={logout }>Sair</Button>
+          <Button onClick={logout}>Sair</Button>
       </div>
     )
 }
