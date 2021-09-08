@@ -1,20 +1,28 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/dist/client/router';
 import { Button, Container, Box, IconButton } from '@chakra-ui/react';
+import { addDays, subDays } from 'date-fns';
 import axios from 'axios';
+
 import { useFetch } from '@refetty/react';
 import { ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons';
 import { Logo, useAuth, formatDate } from './../components';
-import { addDays, subDays } from 'date-fns';
 
-const getAgenda = (when) => axios({
-  method:'get',
-  url: '/api/agenda',
-  params: { when },
-  // headers: {
-  //   autorization: `Bearer ${token}`
-  // }
-})
+import { getToken } from '../config/firebase/client';
+
+const getAgenda = async (when) => { 
+  const token = await getToken();
+  
+  return axios({
+    method:'get',
+    url: '/api/agenda',
+    params: { when },
+    headers: {
+      autorization: `Bearer ${token}`
+    }
+  })
+
+}
 
 const Header = ({ children }) => (
   <Box p={4} display="flex" justifyContent="space-between" alignItems="center">
