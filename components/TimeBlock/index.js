@@ -25,7 +25,7 @@ const setSchedule = async data => axios({
     },
 })
 
-const ModalTimeBlock = ({ isOpen, onClose, children, onComplete }) => (
+const ModalTimeBlock = ({ isOpen, onClose, children, onComplete, isSubmitting }) => (
     <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
@@ -36,8 +36,8 @@ const ModalTimeBlock = ({ isOpen, onClose, children, onComplete }) => (
           </ModalBody> 
 
           <ModalFooter>
-            <Button variant="ghost" onClick={onClose}>Cancelar</Button>
-            <Button colorScheme="blue" mr={3} onClick={onComplete}>Reservar horário</Button>
+            {!isSubmitting && <Button variant="ghost" onClick={onClose}>Cancelar</Button> }
+            <Button colorScheme="blue" mr={3} onClick={onComplete} isLoading={isSubmitting}>Reservar horário</Button>
           </ModalFooter>
         </ModalContent>
     </Modal>
@@ -48,14 +48,22 @@ export const TimeBlock = ({ time }) => {
     const toggle = () => setIsOpen(prevState => !prevState)
 
     const { 
-        values, 
+        values,  
         handleSubmit, 
         handleChange, 
         handleBlur,
         errors, 
-        touched
+        touched,
+        isSubmitting
     } = useFormik({
-        onSubmit: (values) => setSchedule({ ...values, when: time }),
+        onSubmit: async (values) => {
+            try {
+                await setSchedule({ ...values, when: time })
+                toggle()
+            } catch (error) {
+                console.log(error)
+            }
+        },
         initialValues: {
             name: '',
             phone: ''
@@ -70,7 +78,13 @@ export const TimeBlock = ({ time }) => {
         <Button p={8} bg="blue.500" color="white" onClick={toggle}>
             {time}
 
-            <ModalTimeBlock isOpen={isOpen} onClose={toggle} time={time} onComplete={handleSubmit}>
+            <ModalTimeBlock 
+                isOpen={isOpen} 
+                onClose={toggle} 
+                time={time} 
+                onComplete={handleSubmit} 
+                isSubmitting={isSubmitting}
+            >
                 <>
                     <Input 
                         name="name"
@@ -82,6 +96,7 @@ export const TimeBlock = ({ time }) => {
                         onChange={handleChange}
                         size="lg"
                         label="Nome:"
+                        disabled={isSubmitting}
                     />
                     <Input 
                         name="phone"
@@ -93,6 +108,7 @@ export const TimeBlock = ({ time }) => {
                         onChange={handleChange}
                         size="lg"
                         label="Telefone:"
+                        disabled={isSubmitting}
                     />
                 </>
             </ModalTimeBlock>
