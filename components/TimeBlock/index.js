@@ -15,12 +15,14 @@ import {
 } from '@chakra-ui/react';
 
 import { Input } from '../Input';
+import { format } from 'date-fns';
 
-const setSchedule = async data => axios({
+const setSchedule = async ({ date, ...data }) => axios({
     method:'post',
     url: '/api/schedule',
     data: {  
         ...data,
+        date: format(date, 'yyyy-MM-dd'),
         username: window.location.pathname.replace('/', ''), 
     },
 })
@@ -43,7 +45,7 @@ const ModalTimeBlock = ({ isOpen, onClose, children, onComplete, isSubmitting })
     </Modal>
 )
 
-export const TimeBlock = ({ time }) => {
+export const TimeBlock = ({ time, date }) => {
     const [isOpen, setIsOpen] = useState();
     const toggle = () => setIsOpen(prevState => !prevState)
 
@@ -58,7 +60,7 @@ export const TimeBlock = ({ time }) => {
     } = useFormik({
         onSubmit: async (values) => {
             try {
-                await setSchedule({ ...values, when: time })
+                await setSchedule({ ...values, time, date })
                 toggle()
             } catch (error) {
                 console.log(error)
