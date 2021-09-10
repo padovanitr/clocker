@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useFormik } from 'formik';
+import axios from 'axios';
 import * as yup from 'yup';
 
 import { 
@@ -14,6 +15,15 @@ import {
 } from '@chakra-ui/react';
 
 import { Input } from '../Input';
+
+const setSchedule = async data => axios({
+    method:'post',
+    url: '/api/schedule',
+    data: {  
+        ...data,
+        username: window.location.pathname.replace('/', ''), 
+    },
+})
 
 const ModalTimeBlock = ({ isOpen, onClose, children, onComplete }) => (
     <Modal isOpen={isOpen} onClose={onClose}>
@@ -45,14 +55,14 @@ export const TimeBlock = ({ time }) => {
         errors, 
         touched
     } = useFormik({
-        onSubmit: () => {},
+        onSubmit: (values) => setSchedule({ ...values, when: time }),
         initialValues: {
             name: '',
             phone: ''
         },
         validationSchema: yup.object().shape({
             name: yup.string().required('preenchimento obrigatório'),
-            phone: yup.string().required('preenchimento obrigatório').email('Email inválido')
+            phone: yup.string().required('preenchimento obrigatório')
         })
     })
 
@@ -76,7 +86,7 @@ export const TimeBlock = ({ time }) => {
                     <Input 
                         name="phone"
                         value={values.phone}
-                        error={errors.name}
+                        error={errors.phone}
                         touched={touched.phone}
                         onBlur={handleBlur}
                         placeholder="(99) 9 9999-9999"
