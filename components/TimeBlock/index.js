@@ -105,6 +105,7 @@ export const TimeBlock = ({ time, date, disabled }) => {
                         name="phone"
                         value={values.phone}
                         error={errors.phone}
+                        mask={['(99) 9999-9999', '(99) 9 9999-9999']}
                         touched={touched.phone}
                         onBlur={handleBlur}
                         placeholder="(99) 9 9999-9999"
